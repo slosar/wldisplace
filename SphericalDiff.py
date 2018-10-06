@@ -53,7 +53,7 @@ class SphericalMap:
         almp*=np.sqrt((self.ell+self.em+1)*(self.ell-self.em+1)*(2*self.ell+1)/(2*self.ell+3))
         almp[1:,:]=almp[:-1,:]
         almp[0,:]=0.0
-        print almp[:10,0]
+        print(almp[:10,0])
         m2=self._CloneAlm(almp)
         m1=self._CloneAlm(self.Alm*(self.ell+1))
         theta,phi=hp.pix2ang(self.Nside,np.arange(self.Npix))
