@@ -45,6 +45,22 @@ class SphericalMap:
         x[self.ell==0]=0.0
         return self._CloneAlm(x)
 
+    def PhiFromKappa(self):
+        with np.errstate(divide='ignore',invalid='ignore'):
+            x=-2*self.Alm/(self.ell*(self.ell+1))
+        x[self.ell==0]=0.0
+        return self._CloneAlm(x)
+
+    def SplitByEll(self,lranges):
+        toret=[]
+        for llow, lhigh in zip(lranges[:-1],lranges[1:]):
+            cAlm=np.copy(self.Alm)
+            cAlm[self.ell<llow]=0.0
+            cAlm[self.ell>=lhigh]=0.0
+            toret.append(self._CloneAlm(cAlm))
+        return toret
+
+    
     def dphi (self):
         return self._CloneAlm(self.Alm*(0+1j)*self.em)
 
@@ -61,7 +77,7 @@ class SphericalMap:
         return SphericalMap(mtot)
 
     def DisplaceObjects (self, theta,phi,fromKappa=True):
-        lphi=self.invLaplace() if fromKappa else self
+        lphi=self.PhiFromKappa() if fromKappa else self
         ipix=hp.ang2pix(self.Nside,theta,phi)
         dtheta=lphi.dtheta().A[ipix]
         dphi=lphi.dphi().A[ipix]/np.sin(theta)
